@@ -9,9 +9,13 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
     private MyTank tb = null;
     private Vector<Enemytanks> enemytanks = new Vector<>();
     private int enemytanksize = 3;
-    public Battlefield(){
+    public Battlefield(){//初始化敌方坦克
         for (int i = 0; i < enemytanksize; i++) {
             enemytanks.add(new Enemytanks(100 * (i + 1),0));
+            enemytanks.get(i).setDirection(1);
+            Launch ENbullet = new Launch(enemytanks.get(i).getX() + 20 , enemytanks.get(i).getY() + 60,enemytanks.get(i).getDirection());
+            enemytanks.get(i).bullet.add(ENbullet);
+            new Thread(ENbullet).start();
         }
         tb = new MyTank(100,100);
     }
@@ -20,11 +24,25 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
         super.paint(g);
         g.fillRect(0,0,1000,750);
         Tankpa(tb.getX(),tb.getY(),g,tb.getDirection(),0);
-        for (int i = 0; i < enemytanks.size(); i++) {
+        for (int i = 0; i < enemytanks.size(); i++) {//绘制敌方坦克
             Enemytanks enemytanks = this.enemytanks.get(i);
-            Tankpa(enemytanks.getX(),enemytanks.getY(),g,enemytanks.getDirection(),1);
+            if (enemytanks.issurvive){
+                Tankpa(enemytanks.getX(),enemytanks.getY(),g,enemytanks.getDirection(),enemytanks.getDirection());
+                for (int j = 0; j < enemytanks.bullet.size(); j++) {//绘制敌方子弹射击
+                    Launch enbulletone = enemytanks.bullet.get(j);
+                    if (enbulletone.issurvive == true&&enbulletone.issurvive){//判断敌人坦克是否存活
+                        g.fill3DRect(enbulletone.getX(),enbulletone.getY(),2,2,false);
+                    }
+                    else {
+                        enemytanks.bullet.remove(enbulletone);
+                    }
+            }
+
+
+
+            }
         }
-        //子弹发射绘制
+        //我方子弹发射绘制
         if (tb.getLaunch() != null&& tb.getLaunch().issurvive == true){
             g.fill3DRect(tb.getLaunch().getX(),tb.getLaunch().getY(),2,2,false);
         }
@@ -73,6 +91,28 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
 
 
         }
+    }
+    //判断主控坦克是否击中敌方
+    public void BombedEnemy(Launch cannonball ,Enemytanks emt){
+        switch (emt.getDirection()){
+            case 0:
+            case 1:
+                if (cannonball.getX() > emt.getX()&&cannonball.getX() < emt.getX()+40
+                        &&cannonball.getY() > emt.getY()&&cannonball.getY()< emt.getY()+ 60){
+                    cannonball.issurvive = false;
+                    emt.issurvive = false;
+                }
+                break;
+            case 2:
+            case 4:
+                if (cannonball.getX()>=emt.getX()&&cannonball.getX() <=emt.getX()+60
+                        &&cannonball.getY() >=emt.getY()&&cannonball.getY()<=emt.getY()+ 40){
+                    cannonball.issurvive = false;
+                    emt.issurvive = false;
+                }
+                break;
+        }
+
     }
 
     @Override
@@ -124,6 +164,13 @@ public class Battlefield extends Panel implements KeyListener ,Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            if (tb.issurvive&&tb.getLaunch() != null){
+                for (int i = 0; i < enemytanks.size(); i++) {//检查我的子弹是否击中敌方坦克
+                    Enemytanks enemytankone = this.enemytanks.get(i);
+                    BombedEnemy(tb.getLaunch(),enemytankone);
+                }
+            }
+
             this.repaint();
         }
     }

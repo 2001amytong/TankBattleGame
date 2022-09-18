@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class MyTank extends Tank  {
+    boolean issurvive = true;
     private Launch launch = null;
     public MyTank(int x, int y) {
         super(x, y);
@@ -13,7 +14,7 @@ public class MyTank extends Tank  {
         return launch;
     }
 
-    public void Shotpress(){
+    public void Shotpress(){//子弹方向控制
         switch (getDirection()){
             case 0://向上
                 launch = new Launch(getX() + 20,getY(),0);
