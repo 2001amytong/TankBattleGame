@@ -4,9 +4,18 @@ public class Tank {
     private int x;
     private int y;
     private int direction = 0;
+    private int speed = 10;
 
     public int getDirection() {
         return direction;
+    }
+
+    public int getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(int speed) {
+        this.speed = speed;
     }
 
     public void setDirection(int direction) {
@@ -32,5 +41,17 @@ public class Tank {
 
     public void setY(int y) {
         this.y = y;
+    }
+    public void moveup(){//向上移动
+       y -= speed;
+    }
+    public void  movedown(){//向下移动
+        y += speed;
+    }
+    public void movelietf(){
+        x -= speed;
+    }
+    public void moveright(){
+        x += speed;
     }
 }

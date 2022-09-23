@@ -1,7 +1,7 @@
 package com.chamifj.tankedz.Tankgme03;
 
-public class BoomKill {
-    int x,y;
+public class BoomKill implements Runnable {
+     int x,y;
     boolean issurvive = true;
     int life;
 
@@ -18,5 +18,15 @@ public class BoomKill {
             life--;
         }
 
+    }
+
+    @Override
+    public void run() {
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        Lifeprocesses();
     }
 }
